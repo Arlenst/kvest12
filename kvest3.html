@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Праздничный тест</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        .correct {
+            border: 2px solid #28a745 !important;
+            background-color: #f8fff8 !important;
+        }
+
+        .incorrect {
+            border: 2px solid #dc3545 !important;
+            background-color: #fff8f8 !important;
+        }
+
+        .feedback {
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body style="height: 100vh; background: #d5f0d4;">
+
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center pt-5" style="align-items: center; margin-top: -10vh;">
+            <div class="col-28 col-lg-32 col-xl-24">
+                <div class="ratio ratio-16x9 mb-5">
+                    <video controls>
+                        <source src="002.2.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <form id="quizForm">
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <h2 class="card-title">Что ответил Великий комбинатор?</h2>
+                            <input type="text" class="form-control form-control-lg" name="q1"
+                                placeholder="Введите ответ...">
+                            <div class="feedback"></div>
+                        </div>
+                    </div>
+
+                    <!-- Скрытое поле для второго ответа -->
+                    <div class="card mb-5 hidden mt-5" id="secondQuestion">
+                        <div class="card-body p-0">
+                            <h2 class="card-title">Молодец! Басик явно что-то прячет...</h2>
+                            <h2 class="card-title">Введи код</h2>
+                            <input type="text" class="form-control form-control-lg" name="q2"
+                                placeholder="Введите секретный код...">
+                            <div class="feedback" id="q2Feedback"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3" id="submitBtn">Проверить
+                        ответ</button>
+                    <button type="button" class="btn btn-warning btn-lg w-100 hidden mt-3" id="retryBtn">Попробовать еще
+                        раз</button>
+                    <button type="button" class="btn btn-success btn-lg w-100 hidden" id="submitSecondBtn">Ввести код
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizForm = document.getElementById('quizForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const submitSecondBtn = document.getElementById('submitSecondBtn');
+        const secondQuestion = document.getElementById('secondQuestion');
+        const q2Feedback = document.getElementById('q2Feedback');
+
+        quizForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Правильные ответы
+            const correctAnswers = {
+                q1: ['Контора пишет']
+            };
+
+            // Проверка первого вопроса
+            const q1Input = document.querySelector('[name="q1"]');
+            const q1Answer = q1Input.value.trim().toLowerCase();
+            const q1Card = q1Input.closest('.card');
+            const q1Feedback = q1Card.querySelector('.feedback');
+
+            q1Card.classList.remove('correct', 'incorrect');
+
+            if (correctAnswers.q1.map(a => a.toLowerCase()).includes(q1Answer)) {
+                // Правильный ответ
+                q1Card.classList.add('correct');
+                q1Feedback.textContent = 'Верно! ✓';
+                q1Feedback.className = 'feedback text-success';
+
+                // Блокируем поле ввода первого вопроса
+                q1Input.disabled = true;
+
+                // Скрываем кнопку проверки и показываем второе поле
+                submitBtn.classList.add('hidden');
+                secondQuestion.classList.remove('hidden');
+                submitSecondBtn.classList.remove('hidden');
+
+            } else {
+                // Неправильный ответ
+                q1Card.classList.add('incorrect');
+                q1Feedback.textContent = 'Неверно! ✗';
+                q1Feedback.className = 'feedback text-danger';
+
+                // Показываем кнопку "Попробовать еще раз"
+                submitBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+            }
+        });
+
+        // Обработчик для кнопки "Попробовать еще раз"
+        retryBtn.addEventListener('click', function () {
+            // Сбрасываем стили и сообщения
+            const q1Card = document.querySelector('[name="q1"]').closest('.card');
+            const q1Feedback = q1Card.querySelector('.feedback');
+
+            q1Card.classList.remove('incorrect');
+            q1Feedback.textContent = '';
+
+            // Показываем основную кнопку, скрываем кнопку повтора
+            submitBtn.classList.remove('hidden');
+            retryBtn.classList.add('hidden');
+
+            // Фокусируемся на поле ввода
+            document.querySelector('[name="q1"]').focus();
+        });
+
+        // Обработчик для кнопки проверки второго ответа
+        submitSecondBtn.addEventListener('click', function () {
+            const q2Input = document.querySelector('[name="q2"]');
+            const q2Answer = q2Input.value.trim().toLowerCase();
+
+            // Правильный ответ для второго вопроса (замените на нужный)
+            const correctSecondAnswer = ['56382'];
+
+            if (correctSecondAnswer.map(a => a.toLowerCase()).includes(q2Answer)) {
+                // Правильный ответ - переходим на другую страницу
+                window.location.href = 'kvest4.html'; // Замените на нужный URL
+            } else {
+                // Неправильный ответ
+                q2Feedback.textContent = 'Неверный код!';
+                q2Feedback.className = 'feedback text-danger';
+                q2Input.focus();
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
